@@ -1,5 +1,5 @@
 # C. Choosing Balls 
-## https://codeforces.com/problemset/problem/264/C
+
 
 There are n balls. They are arranged in a row. Each ball has a color (for convenience an integer) and an integer value. The color of the i-th ball is ci and the value of the i-th ball is vi.
 
