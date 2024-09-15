@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\title{Ejercicio Greedy DAA}
+\author{Francisco Vicente Suárez Bellón C-412}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Enunciado del Problema}
+
+ErnKor está listo para hacer cualquier cosa por Julen, incluso nadar a través de pantanos infestados de cocodrilos. Decidimos poner a prueba este amor. ErnKor tendrá que nadar a través de un río con un ancho de 1 metro y una longitud de \(n\) metros.
+
+El río está muy frío. Por lo tanto, en total (es decir, durante toda la natación desde 0 hasta \(n+1\)) ErnKor puede nadar en el agua no más de \(k\) metros. Por el bien de la humanidad, hemos añadido no solo cocodrilos al río, sino también troncos sobre los que puede saltar. Nuestra prueba es la siguiente:
+
+Inicialmente, ErnKor está en la orilla izquierda y necesita llegar a la orilla derecha. Estas se encuentran a 0 y \(n+1\) metros respectivamente. El río se puede representar como \(n\) segmentos, cada uno con una longitud de 1 metro. Cada segmento contiene un tronco 'L', un cocodrilo 'C' o solo agua 'W'. ErnKor puede moverse de la siguiente manera:
+
+\begin{itemize}
+    \item Determina si ErnKor puede llegar a la orilla derecha.
+    \item La primera línea de cada caso de prueba contiene tres números \(n\), \(m\), \(k\) (donde \(0 \leq k \leq 2 \cdot 10^5\), \(1 \leq n \leq 2 \cdot 10^5\), \(1 \leq m \leq 10\)) — la longitud del río, la distancia que ErnKor puede saltar y el número de metros que ErnKor puede nadar sin congelarse.
+    \item La segunda línea de cada caso de prueba contiene una cadena \(a\) de longitud \(n\). \(a_i\) denota el objeto ubicado en el \(i\)-ésimo metro. (\(a_i \in \{ 'W', 'C', 'L' \}\))
+\end{itemize}
+
+\subsection{Reglas de Movimiento}
+\begin{itemize}
+    \item Si está en la superficie (es decir, en la orilla o en un tronco), no puede saltar hacia delante más de \(m\) metros (puede saltar a la orilla, a un tronco o al agua).
+    \item Si está en el agua, solo puede nadar hasta el siguiente segmento de río (o hasta la orilla si está en el agua y el agua está a \(n\)-ésimos metros).
+    \item ErnKor no puede aterrizar en un segmento con un cocodrilo de ninguna manera.
+\end{itemize}
+
+\subsection{Pregunta}
+Determine si ErnKor puede llegar a la orilla derecha.
+
+
+
+
+\end{document}
+
