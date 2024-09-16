@@ -68,6 +68,61 @@ Para resolver el problema de manera greedy hay que tener en cuenta lo siguiente:
     \item Como a cada tronco se llega tratando de minimizar la cantidad de metros nadados, eso implica que a la otra orilla, en caso de llegar, se hará en la menor cantidad de metros nadados.
 \end{itemize}
 
+\section*{Notaciones}
+\begin{itemize}
+    \item Orilla izquierda: $O_{\text{izq}}$ 
+    \item Orilla derecha: $O_{\text{der}}$
+    \item $T_{\text{sección}}$: Son todos los cuadrantes a los que se puede saltar a la derecha desde el tronco $T$ en su rango $m$ (Si hay un tronco $T'$ en ese rango, la sección acaba en la casilla anterior de $T$) y del espacio anterior hasta $T$ que no sea de una $T_{\text{sección}}$ previa. (En cada $T_{\text{sección}}$ solo hay un tronco).
+    \item Rango de $T_{\text{sección}}$: Todos los cuadrantes que se pueden saltar desde ese tronco hacia la derecha.
+    \item Salto más lejano dentro del rango de la $T_{\text{sección}}$: $Max_{\text{jump}}$ sin que se salte arriba.
+    \item Metros nadados en total: $s$.
+    \item Metros nadados hasta el i-ésimo tronco: $s_i$.
+\end{itemize}
+
+\subsection*{Observaciones}
+\begin{itemize}
+    \item Si dentro del rango de la $T_{\text{sección}}$ no existe ningún tronco u orilla a la que saltar, entonces se saltará al final de la $T_{\text{sección}}$. 
+        \begin{itemize}
+            \item Si en el final de la $T_{\text{sección}}$ hay un cocodrilo, entonces $s = \infty$.
+        \end{itemize}
+    \item Si nadando el próximo segmento es un cocodrilo, entonces $s = \infty$. 
+    \item En caso de no haber $T_{\text{sección}}$, la forma de conocer el mínimo de metros a nadar es calcular todos los cuadrantes hasta la orilla; si hay algún cocodrilo, el mínimo no existirá ($s = \infty$).
+\end{itemize}
+
+\subsection*{Demostración}
+Demostrar que un problema donde se aplique el salto entre $T_{\text{secciones}}$, siempre que sea posible, da el mínimo de metros a nadar.
+
+\subsubsection*{Caso base}
+Para cantidad de $T_{\text{sección}} = 1$:
+\begin{itemize}
+    \item Se puede saltar desde $O_{\text{izq}}$ al tronco $T_1$, entonces $s_1 = 0$.
+    \item Si no se puede saltar hasta la $T_{\text{sección}}$, entonces $s_1 = \text{distancia hasta } T_1$.
+    \item Si $O_{\text{der}}$ está en el rango de la $T_{\text{sección}}$, entonces $s = s_1$.
+    \item En caso contrario, $s = s_1 + (\text{Cantidad de metros que hay desde } Max_{\text{jump}} \text{ hasta la orilla})$, dándose cuenta que $s$ es mínimo dado que es obligatorio nadar hasta la $O_{\text{der}}$.
+\end{itemize}
+
+\subsubsection*{Hipótesis}
+Supongamos que para todo mapa con cantidad de $T_{\text{sección}} = m$, se cumple que el método anterior me arroja el mínimo de metros a nadar.
+
+\subsubsection*{Tesis}
+Sea el mapa $Map$ con cantidad de $T_{\text{sección}} = m + 1$. 
+
+Si tomamos $Map_1$ como las primeras $T_{\text{secciones}}$, y donde acaba la m-ésima sección ponemos la $O_{\text{der}_1}$, y con $Map_2$ desde donde acababa $Map_1$ hasta la $O_{\text{der}}$, por tanto como $Map_1$ y $Map_2$ tienen $\leq m$ cantidad de $T_{\text{secciones}}$, cumplen la hipótesis.
+
+Sea:
+\[
+min_1 = s_{Map_1} \quad \text{y} \quad min_2 = s_{Map_2}.
+\]
+
+Demostrar que:
+\[
+s_{Map} = min_1 + min_2.
+\]
+
+- Si en el rango de la última sección hay un tronco, entonces se puede saltar al tronco que está en $Map_2$, por tanto no hubo que aumentar s y como se llegó de forma óptima hasta el último tronco no afectará a lo hecho en $Map_2$, por lo tanto se cumple.
+
+- Si no hay un tronco en el rango de la última sección:
+Entonces en $Map_2$, el siguiente cuadrante desde la orilla izquierda no es un tronco, por tanto se nadó hasta el tronco lo cual es obligatorio dado que no existe forma de llegar al tronco y por cómo se dividen las secciones tampoco en el mapa, entonces se cumple lo anterior.
 
 \end{document}
 
