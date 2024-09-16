@@ -34,7 +34,39 @@ Inicialmente, ErnKor está en la orilla izquierda y necesita llegar a la orilla 
 \subsection{Pregunta}
 Determine si ErnKor puede llegar a la orilla derecha.
 
+\section{Soluciones}
 
+\subsection{Descripción del problema}
+
+Este problema es un problema de satisfacción de restricciones donde:
+\begin{itemize}
+    \item La cantidad de metros que se nada en total no puede superar las $k$ en total.
+    \item Nunca se puede caer en una casilla de un cocodrilo.
+    \item Desde una orilla o tronco se puede saltar hasta $m$ casillas ($m \leq 10$).
+    \item El objetivo es llegar a la otra orilla.
+\end{itemize}
+
+Para ello puede crearse un código de backtrack donde por cada vez que se puede saltar se analizan todos los escenarios posibles, y si en alguno se llega a la otra orilla habiendo cumplido las restricciones se puede decir que es posible.
+
+Como optimización de esta idea puede tomarse que en cada llamado recursivo cada vez que se llamen a ver una rama del árbol con respecto a ver a que lugar saltar si la cantidad de metros que se nado es mayor o igual que el mínimo que se tenia anteriormente (el cual cumplió con las restricciones) se poda esa rama de la recursividad, dado que no es posible disminuir la cantidad de metros nadados, solo se pueden mantener o aumentar.
+
+\subsection{Solución Greedy}
+
+Para resolver el problema de manera greedy hay que tener en cuenta lo siguiente:
+\begin{itemize}
+    \item Desde la orilla o cualquier tronco trataremos de saltar al tronco más cercano:
+    \begin{itemize}
+        \item Esto no afecta en la solución dado que al saltar al tronco u orilla más cercano no aumenta la cantidad de metros nadados.
+        \item Saltar al primer tronco u orilla no afecta a poder llegar a otro tronco anteriormente alcanzable dado que si desde el tronco u orilla anterior se podía llegar al anterior porque estaba a una distancia $\leq m$, entonces desde este la distancia será también $\leq m$.
+        \item Si desde el tronco u orilla no es posible saltar a otra orilla u tronco en los $m$ metros posibles, saltar al pedazo de agua más lejano:
+        \begin{itemize}
+            \item Saltar al pedazo de agua más lejano hace que no se tengan que nadar más metros que si se saltara a una distancia inferior.
+            \item Si hay algún cocodrilo a una distancia menor que la que se saltó, no afectará.
+            \item Si existe un cocodrilo en la casilla siguiente al lugar donde se saltó, puede ser que se llegó a una menor al máximo que se podía saltar y de cualquier forma que se salte es imposible no caer en la casilla del cocodrilo si es mediante nados consecutivos análogos.
+        \end{itemize}
+    \end{itemize}
+    \item Como a cada tronco se llega tratando de minimizar la cantidad de metros nadados, eso implica que a la otra orilla, en caso de llegar, se hará en la menor cantidad de metros nadados.
+\end{itemize}
 
 
 \end{document}
