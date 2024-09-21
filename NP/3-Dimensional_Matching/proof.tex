@@ -1,0 +1,164 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{multirow} % Para celdas que ocupen varias filas
+
+
+
+\title{Problema NP-Completo}
+\author{Francisco Vicente Suárez Bellón}
+\date{}
+
+\begin{document}
+
+\maketitle
+\section{Enunciado}
+En el pueblo de Villazarcillo el alcalde en su plan para mejorar la 
+calidad de vida de sus habitantes ha elaborado un programa donde a cada Hombre,Mujer,Perro
+del pueblo serán emparejados, ningun ser que este en un emparejamiento x puede estar en un emparejamiento y $y!=x$
+Para ello se crearon las siguientes reglas:
+\begin{itemize}
+    \item Cada Perro describia con que pareja de $(H,M)$ desea estar. (Análogo en Mujeres y Hombres).
+    \item Un submatching es un conjunto de m,h,p de todos los posibles trios.
+    \item Un matching es un submatching de tamaño $n$.
+    \item Un (Sub)Matching es *estable* si no tiene trios bloqueantes (Un perro, mujer, hombre que se prefieren mutuamente en vez del lugar asignado actualmente).
+    \item La cantidad de perros,mujeres y hombres en el programa será exactamente iguales.
+\end{itemize}
+Despues de realizadas las incripciones el alcalde quiere conocer si es posible tener un matching perfecto.
+
+
+\section*{Reduccion Desde 3DM}
+
+Una instancia de 3DM involucra tres conjuntos finitos de igual cardinalidad, que denotamos como $A_0$, $B_0$, y $D_0$, relacionándolos con $A$, $B$, y $D$ de 3GSM. 
+
+Dado un conjunto de tripletas $T_0 \subseteq A_0 \times B_0 \times D_0$, el problema 3DM es decidir si existe un $M_0 \subseteq T_0$ tal que $M_0$ es una coincidencia completa, es decir, cada elemento de $A_0$, $B_0$, y $D_0$ aparece exactamente una vez en $M_0$.
+
+Dada una instancia de 3DM $I'$, construimos una instancia correspondiente de 3GSM $I$. Aunque nuestra construcción puede adaptarse para funcionar con cualquier instancia de 3DM en general, asumiremos, para simplificar la presentación, que ningún elemento de $A_0$, $B_0$ o $D_0$ aparece en más de tres tripletas de $T_0$. Esta suposición se hace sin pérdida de generalidad.
+
+Construimos $I$ construyendo primero un "marco" que consiste en los elementos $\alpha_1, \alpha_2 \in A$, $\beta_1, \beta_2 \in B$, y $\delta_1, \delta_2 \in D$. Las preferencias de estos elementos no dependen de la estructura de $I'$ y se muestran en la Figura 2. En la Figura 2 y en las figuras posteriores, solo nos interesamos en los roles desempeñados por unos pocos elementos en cada lista de preferencias. Por lo tanto, usamos la notación $Rem$ para denotar cualquier permutación fija pero arbitraria de los elementos restantes.
+
+
+
+\begin{table}[h]
+    \centering
+    \caption{Preferencias de los elementos $\alpha_1 \alpha_2 \beta_1 \beta_2 \delta_1 \delta_2$}
+    \[
+    \begin{array}{c|cccccccc}
+        \alpha_1 & \beta_1\delta_1 & \beta_2\delta_1 & \beta_1\delta_2 & \dots & \Pi_{\text{Rem}} & \dots \\
+        \alpha_2 & \beta_2\delta_2 & \dots & \dots &\dots & \Pi_{\text{Rem}} & \dots \\
+        \dots & & & & &  \\
+        \hline
+        \beta_1 & \alpha_1\delta_2 & \dots & & & \Pi_{\text{Rem}} & \dots & \alpha_1\delta_1 \\
+        \beta_2 & \alpha_2\delta_1 & \alpha_1\delta_1 & \dots & &  \Pi_{\text{Rem}} & \dots \\
+        \dots & & & & & \\
+        \hline
+        \delta_1 & \alpha_1\beta_2 & \dots &  & & \Pi_{\text{Rem}} & \alpha_1\beta_1 \\
+        \delta_2 & \alpha_1\beta_1&  \alpha_2\beta_2 & \dots & & \Pi_{\text{Rem}} \\
+        \dots & & & & & \\
+    \end{array}
+    \]
+    \end{table}
+
+
+Demostraremos más adelante en el Lema 2 que los triples $\alpha_1 \beta_1 \delta_1$  $\alpha_2 \beta_2 \delta_2$
+deben estar incluidos en cualquier matrimonio estable. Ha de notarse que $\alpha_1 \beta_1 \delta_1$ es la parte más débil en tal matrimonio
+porque representa la pareja menos preferida tanto para $\beta_1$ como para $\delta_1$. Entonces, si cualquier elemento $a \in A$ esta emparejado con una pareja
+que prefiere menos $\beta_1 \delta_1$ por lo tanto convierte a $a\beta_1\delta_1$ es una tripleta desestabilizadora.
+\\
+\\
+La observación anterior nos da una estrategia que utiliza el par $\beta_1 \delta_1$ como un "Límite" en las preferencias de los elementos restantes de $A$.
+Una condición necesaria para un matrimonio estable en $I$ es qe todos los elementos restantes de $A$ deben emparejarse con paraes ubicados a la izquierda del límite, es decir, $\geq \beta_1 \delta_1$. Usando información de $T_0$ para construir el conjunto de elementos que deben posicionarse 
+a la izquierda del límite, aseguramos que esta condición para un matrimonio estable solo puede cumplirse si $T_0$ contiene un emparejamiento completo.
+La dificultad restante es asegurar que todos los elementos de $A$ se emperejen a la izquierda del límite es suficiente para obtener un matrimonio estable. Antes de dar detalles de la construcción que proporciona la solución, primero probamos los lemas que establecen las propiedades del marco.
+
+\subsection{Lemma 1:}
+Si existe un matrimonio estable $M$ para $I$ construido extendiendo el marco de la Figura 2, entonces $\alpha_1 \beta_1 \delta_1 \notin M $.
+
+\textbf{Demostración: }Supongamos que $\alpha_1 \beta_2 \delta_1 \in M$. Dado $\alpha_1 \beta_2 \delta_1 \in M$ la pareja de $\delta_2$ no puede ser $\alpha_1 \beta_1 \lor  \alpha_2 \beta_2$.
+Como se tiene $\delta_2$ entonces $\alpha_1 \beta_1$ es la única pareja en $\delta_2$ es $\delta_2 \beta_2$.
+Entonces $\alpha_2 \beta_2$ es la posible pareja de $\delta_2$ en $M$. Además $\alpha_2 \beta_2$ son las primeras opciones de $\alpha_2$ y $\beta_2$ respectivamente. Por lo tanto $\alpha_2 \beta_2 \delta_2$ es un triple desestabilizador en $M$ es una contradicción.
+
+\subsection{Lemma 2:}
+Si existe un matrimonio estable $M$ para $I$ construido extendiendo el marco de la Figura 2, entonces $\alpha_2 \beta_1 \delta_1 \land \alpha_2 \beta_2 \delta_2  \in M$ 
+
+\textbf{Demostración: }Primero probamos $\alpha_1 \beta_1 \delta_1 \in M$. Supongamos que $\beta_1$ no está empearejado con $\alpha_1 \delta_1 \in M$, entonces podemos encontrar un triple desestabilizador para $M$. Existen dos posibles casos:
+\subsubsection{Caso 1:}
+    $\beta_1$ esta emperejado con $\alpha_1 \beta_2 in M$ implica que $\alpha_2 \beta_2 \delta_2$, $\alpha_1 \beta_1 \delta_1$ y $\alpha_1 \beta_2 \delta_1 \notin M$. Por un argumento similar al del Lema 1 $\alpha_1 \beta_2 \delta_1$ es un triple desestabilizador.
+\subsubsection{Caso 2:}
+$\beta_1$ no está emparejado con $\alpha_1 \delta_1$ ni con $\alpha_1 \delta_1$ $\alpha_1 \beta_2 \delta_1 \notin M$ por el Lema 1. Además $\alpha_1 \beta_1 \delta_1 \notin M$ lo que implica que $\alpha_1 \beta_1 \delta_2$ es un triple desestabilizador en este caso.
+\subsubsection{Conclusiones: }
+Por lo tanto, concluimos que $\alpha_1 \beta_1 \delta_1 \in M$, lo que implica que $\alpha_1 \beta_1 \delta_2 \notin M$. Ahora es fácil verificar
+que si $\alpha_2 \beta_2 \delta_2 \notin M$, entonces es un triple desestabilizador.
+\\
+\\
+Si los conjuntos de $I_0$ $(A_0,B_0,C_0)$ tienen cada uno k elementos, entonces los conjuntos de $I$ $(A,B,C)$ tienen cada uno $3k+2$ elementos. Los $\alpha_s$, $\beta_s$, $\delta_s$ que están en el marco, representan dos elementos. Los restantes $3k$ elementos se definen de la siguiente manera. 
+\\
+Supongamos que $A_0={a_1,a_2,\dots,a_k}$, $B_0={b_1,b_2,\dots,b_k}$ y $D_0={d_1,d_2\dots,d_k}$.
+Según una suposición anterior, cada elemento $a_i \in A_0$ aparece en no más de tres triples de $T_0$. Clonamos tres copias de $a_i$ y remplazamos $a_i$ con los clones $a_1[1],a_i[2],a_i[3] $en $A$.
+Las preferencias de estos clones se establecen para permitir que exactamente uno de sus emparejamientos en un matrimonio estable corresponda a un triple en $T_0$.
+
+Para evitar que los dos clones restantes interfieran con la configuración anterior, añadimos los elementos $w_{a_i},y_{a_i}$ a $B$ y $x_a,z_a$ a $D$. En un matrimonio estable, los pares
+ $w_{a_i},y_{a_i}$ y $y_a,$ deben emparejarse con dos de los clones de $a_i$dejándolos fuera de acción. Completamos los conjuntos $B$ y $D$ añadiendo a ellos los elementos de $B_0$ y $D_0$ respectivamente.
+ Resumiendo $A = \{\alpha_1, \alpha_2\} \cup \bigcup_{a_i \in A_0} \{a_i[1], a_i[2], a_i[3]\}$, 
+ $B = B_0 \cup \{\beta_1, \beta_2\} \cup \bigcup_{a_i \in A_0} \{w_{a_i}, y_{a_i}\}$ y $D = D_0 \cup \{\delta_1, \delta_2\} \cup \bigcup_{a_i \in A_0} \{x_{a_i}, z_{a_i}\}$.\\ 
+
+
+Dado que $a_ib_{j_1}d_{l_1},a_ib_{j_2}d_{l_2}$ y $a_iB_{j_3}d_{l_3}$ son los triples que contienen $a_i$ en $T_0$
+las preferencias en la Figura 3 logran los objetivos descritos anteriormente. Cuando existen menos de tres triples que contienen ai, igualamos dos o más
+de las $j$ y las $l$.
+
+
+
+\begin{table}[h!]
+    \centering
+   
+    \begin{tabular}{c|ccccccccc}
+        $\alpha_1$ & & & & & & & & & \\
+        $\alpha_2$ & & & & & & & & & \\
+        \vdots     & & & & & & & & & \\
+        $a_i[1]$   & $w_{a_i} x_{a_i}$ & $y_{a_i} z_{a_i}$ & $b_{j_1} d_{l_1}$ & $\beta_1 \delta_1$ & $\cdots$ & $\Pi_{\text{Rem}}$ \\
+        $a_i[2]$   & $w_{a_i} x_{a_i}$ & $y_{a_i} z_{a_i}$ & $b_{j_2} d_{l_2}$ & $\beta_1 \delta_1$ & $\cdots$ & $\Pi_{\text{Rem}}$ \\
+        $a_i[3]$   & $w_{a_i} x_{a_i}$ & $y_{a_i} z_{a_i}$ & $b_{j_3} d_{l_3}$ & $\beta_1 \delta_1$ & $\cdots$ & $\Pi_{\text{Rem}}$ \\
+        \vdots     & & & & & & & & & \\
+        \hline
+        $\beta_1$  & & & & & & & & & \\
+        $\beta_2$  & & & & & & & & & \\
+        \vdots\\
+        $w_a$      & $a_i[1] x_{a_i}$ & $a_i[2] x_{a_i}$ & $a_i[3] x_{a_i}$ & $\cdots$ & & $\Pi_{\text{Rem}}$ \\
+        $y_a$      & $a_i[1] z_{a_i}$ & $a_i[2] z_{a_i}$ & $a_i[3] z_{a_i}$ & $\cdots$ & & $\Pi_{\text{Rem}}$ \\
+        \vdots     & & & & & & & & & \\
+        $b_i$      & & $\cdots$ & & & & $\Pi_{\text{Rem}}$ \\
+        \vdots\\
+        \hline
+        $\delta_1$ & & & & & & & & & \\
+        $\delta_2$ & & & & & & & & & \\
+        \vdots \\
+        $x_a$      & $a_i[3] w_{a_i}$ & $a_i[2] w_{a_i}$ & $a_i[1] w_{a_i}$ & $\cdots$ & & $\Pi_{\text{Rem}}$ \\
+        $z_a$      & $a_i[3] y_{a_i}$ & $a_i[2] y_{a_i}$ & $a_i[1] y_{a_i}$ & $\cdots$ & & $\Pi_{\text{Rem}}$ \\
+        \vdots     & & & & & & & & & \\
+        $d_i$      & & $\cdots$ & & & & $\Pi_{\text{Rem}}$ \\
+        \vdots     & & & & & & & & & \\
+    \end{tabular}
+    \caption{Preferencias en la instancia $I$. La columna de los $\beta_1 \delta_1$ representa los límites. Las preferencias de los $\alpha$,$\beta$ y $\delta$ están mostradas en la tabla anterior. }  
+\end{table}
+
+
+
+
+
+\subsection{Lemma 3:}
+Este lema establece los roles de $w_{a_i}$,$x_{a_i}$,$y_{a_i}$,$z_{a_i}$.
+
+Si existe un matrimonio $M$ estable para $I$ construido con las preferencias mostradas en la Figura 3, entonces para cada $a_i \in A_0$ existen $j_1,j_2 \in 1,2,3$; $j_1 \neq j_2$ tal que:
+\begin{enumerate}
+    \item $a_1[j_1]w_a,x_{a_i} in M$
+\end{enumerate}
+
+
+
+
+
+\end{document}
+
