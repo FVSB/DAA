@@ -27,9 +27,44 @@ Para ello se crearon las siguientes reglas:
     \item La cantidad de perros,mujeres y hombres en el programa será exactamente iguales.
 \end{itemize}
 Despues de realizadas las incripciones el alcalde quiere conocer si es posible tener un matching perfecto.
+\section*{Análisis del problema}
+El trata sobre un problema de decisión en cada triplo a escoger, osea para cada elemento del conjunto de Perros, Mujeres y Hombres 
+se tiene que satisfacer que todos ellos estén en algún triplo. Además la decisión de poner un triplo en la supuesta solución puede
+afectar a la elección  de otro haciendo insatisfacible si se toma esa elección y no habiendo a simple vista ninguna solución a ello.
+
+La características del problema llevan a pensar que este es de naturaleza NP-Completo, además de su similitud con el 
+problema de 3-Dimensional Matching (del cual se usará para esta demostración).
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|cccc}
+    $\alpha_1$&$\beta_1\delta_2$&$\beta_1\delta_1$&$\beta_2\delta_2$&$\beta_2\delta_1$\\
+    $\alpha_2$&$\beta_2\delta_2$&$\beta_1\delta_1$&$\beta_2\delta_1$&$\beta_1\delta_2$\\
+    \hline\\
+    $\beta_1$& $\alpha_2 \delta_1$ & $\alpha_1 \delta_2$ & $\alpha_1\delta_1$& $\alpha_2 \delta_2$\\
+    $\beta_2$& $\alpha_2 \delta_1$ & $\alpha_1 \delta_1$ & $\alpha_2\delta_2$& $\alpha_1 \delta_2$\\
+    \hline\\
+    $\delta_1$ & $\alpha_1 \beta_2$ & $\alpha_1 \beta_1$ & $\alpha_2 \beta_1$ & $\alpha_2 \beta_2$\\
+    $\delta_2$ & $\alpha_1 \beta_1$ & $\alpha_2 \beta_2$ & $\alpha_1 \beta_2$ & $\alpha_2 \beta_1$\\
+
+    \end{tabular}
+    \linebreak
+    \begin{tabular}{|c|c|}
+        \hline
+        Posibles emparejamiento & Triplo desestabilizador\\
+        \hline
+        {$\alpha_1 \beta_1 \delta_1$ , $\alpha_2 \beta_2 \delta_2$} & $\alpha_1 \beta_1 \delta_2$\\
+        {$\alpha_1 \beta_1 \delta_2$ , $\alpha_2 \beta_2 \delta_1$} & $\alpha_2 \beta_1 \delta_1$\\
+        {$\alpha_1 \beta_2 \delta_1$ , $\alpha_2 \beta_1 \delta_2$} & $\alpha_1 \beta_1 \delta_2$\\
+        {$\alpha_1 \beta_2 \delta_2$ , $\alpha_2 \beta_1 \delta_1$} & $\alpha_2 \beta_2 \delta_2$\\
+        \hline
+    \end{tabular}
+    \caption{Instancia del problema para el cual no existe un emparejamiento estable}
+\end{table}
 
 
-\section*{Reduccion Desde 3DM}
+
+\section*{Reduccion desde 3DM}
 
 Una instancia de 3DM involucra tres conjuntos finitos de igual cardinalidad, que denotamos como $A_0$, $B_0$, y $D_0$, relacionándolos con $A$, $B$, y $D$ de 3GSM. 
 
@@ -37,7 +72,9 @@ Dado un conjunto de tripletas $T_0 \subseteq A_0 \times B_0 \times D_0$, el prob
 
 Dada una instancia de 3DM $I'$, construimos una instancia correspondiente de 3GSM $I$. Aunque nuestra construcción puede adaptarse para funcionar con cualquier instancia de 3DM en general, asumiremos, para simplificar la presentación, que ningún elemento de $A_0$, $B_0$ o $D_0$ aparece en más de tres tripletas de $T_0$. Esta suposición se hace sin pérdida de generalidad.
 
-Construimos $I$ construyendo primero un "marco" que consiste en los elementos $\alpha_1, \alpha_2 \in A$, $\beta_1, \beta_2 \in B$, y $\delta_1, \delta_2 \in D$. Las preferencias de estos elementos no dependen de la estructura de $I'$ y se muestran en la Figura 2. En la Figura 2 y en las figuras posteriores, solo nos interesamos en los roles desempeñados por unos pocos elementos en cada lista de preferencias. Por lo tanto, usamos la notación $Rem$ para denotar cualquier permutación fija pero arbitraria de los elementos restantes.
+Construimos $I$ construyendo primero un "marco" que consiste en los elementos $\alpha_1, \alpha_2 \in A$, $\beta_1, \beta_2 \in B$, y $\delta_1, \delta_2 \in D$.
+Las preferencias de estos elementos no dependen de la estructura de $I'$ y se muestran en la Figura 2. En la Figura 2 y en las figuras posteriores, solo nos interesamos en los roles desempeñados por unos pocos elementos en cada lista de preferencias.
+Por lo tanto, usamos la notación $\Pi_{\text{Rem}}$ para denotar cualquier permutación fija pero arbitraria de los elementos restantes.
 
 
 
@@ -108,7 +145,6 @@ Para evitar que los dos clones restantes interfieran con la configuración anter
 Dado que $a_ib_{j_1}d_{l_1},a_ib_{j_2}d_{l_2}$ y $a_iB_{j_3}d_{l_3}$ son los triples que contienen $a_i$ en $T_0$
 las preferencias en la Figura 3 logran los objetivos descritos anteriormente. Cuando existen menos de tres triples que contienen ai, igualamos dos o más
 de las $j$ y las $l$.
-
 
 
 \begin{table}[h!]
@@ -222,7 +258,21 @@ restringe esta opción al tercer elemento de la lista de preferencias,
 ya que los dos primeros elementos ya están emparejados. 
 Además, el triplo formado por $a_i$ y este elemento está contenido en
 $T_0$. 
-Por lo tanto, cada trío en $M_0$ también es un trío en $T_0$, y $M_0$ es el emparejamiento completo deseado contenido en T 0.
+Por lo tanto, cada trío en $M_0$ también es un trío en $T_0$, y $M_0$
+es el emparejamiento completo deseado contenido en $T_0$.
+
+\subsection{Conclusión de la demostración:}
+Es fácil verificar que la construcción de
+$I$ a partir de $I_0$ se puede llevar a cabo
+dentro de un límite de tiempo polinómico.
+Por lo tanto, los Teoremas 1 y 2 establecen que
+3GSM es NP-duro.
+También es posible verificar la estabilidad de un
+matrimonio dado en tiempo polinómico, 
+estableciendo así la pertenencia de 3GSM a NP.
+
+Por lo tanto el problema es NP-completo
+
 
 \end{document}
 
