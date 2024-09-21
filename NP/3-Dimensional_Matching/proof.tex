@@ -73,14 +73,14 @@ Una condición necesaria para un matrimonio estable en $I$ es qe todos los eleme
 a la izquierda del límite, aseguramos que esta condición para un matrimonio estable solo puede cumplirse si $T_0$ contiene un emparejamiento completo.
 La dificultad restante es asegurar que todos los elementos de $A$ se emperejen a la izquierda del límite es suficiente para obtener un matrimonio estable. Antes de dar detalles de la construcción que proporciona la solución, primero probamos los lemas que establecen las propiedades del marco.
 
-\subsection{Lemma 1:}
+\subsection{Lema 1:}
 Si existe un matrimonio estable $M$ para $I$ construido extendiendo el marco de la Figura 2, entonces $\alpha_1 \beta_1 \delta_1 \notin M $.
 
 \textbf{Demostración: }Supongamos que $\alpha_1 \beta_2 \delta_1 \in M$. Dado $\alpha_1 \beta_2 \delta_1 \in M$ la pareja de $\delta_2$ no puede ser $\alpha_1 \beta_1 \lor  \alpha_2 \beta_2$.
 Como se tiene $\delta_2$ entonces $\alpha_1 \beta_1$ es la única pareja en $\delta_2$ es $\delta_2 \beta_2$.
 Entonces $\alpha_2 \beta_2$ es la posible pareja de $\delta_2$ en $M$. Además $\alpha_2 \beta_2$ son las primeras opciones de $\alpha_2$ y $\beta_2$ respectivamente. Por lo tanto $\alpha_2 \beta_2 \delta_2$ es un triple desestabilizador en $M$ es una contradicción.
 
-\subsection{Lemma 2:}
+\subsection{Lema 2:}
 Si existe un matrimonio estable $M$ para $I$ construido extendiendo el marco de la Figura 2, entonces $\alpha_2 \beta_1 \delta_1 \land \alpha_2 \beta_2 \delta_2  \in M$ 
 
 \textbf{Demostración: }Primero probamos $\alpha_1 \beta_1 \delta_1 \in M$. Supongamos que $\beta_1$ no está empearejado con $\alpha_1 \delta_1 \in M$, entonces podemos encontrar un triple desestabilizador para $M$. Existen dos posibles casos:
@@ -148,17 +148,82 @@ de las $j$ y las $l$.
 
 
 
-\subsection{Lemma 3:}
+\subsection{Lema 3:}
 Este lema establece los roles de $w_{a_i}$,$x_{a_i}$,$y_{a_i}$,$z_{a_i}$.
 
 Si existe un matrimonio $M$ estable para $I$ construido con las preferencias mostradas en la Figura 3, entonces para cada $a_i \in A_0$ existen $j_1,j_2 \in 1,2,3$; $j_1 \neq j_2$ tal que:
 \begin{enumerate}
-    \item $a_1[j_1]w_a,x_{a_i} in M$
+    \item $a_1[j_1]w_a,x_{a_i} \in M$
+    \item $a_i[j_2]y_{a_i}z_{a_i}\in M$
 \end{enumerate}
 
+\textbf{Demostración: } Considera el triplo $a_1[j_1]w_a,x_{a_i}$ el cual representa la tercera opción preferida de $x_{a_i}$ y las primeras opciones preferidas de $a_i[1]$ y $w_{a_i}$. Se convierte en un triplo desestabilizador a menos que $x_{a_i}$
+se empareje con una de sus tres primeras opciones preferidas, probando la parte $1$ del lema.\\
+\\
+De manera similar $z_{a_i}$ debe emparejarse con una de sus tres primeras opciones preferidas. De lo contrario,$y_{a_i}z_{a_i}$ forma un triplo desestabilizador con $a_i[1] \lor a_i[2]$ dependiendo de cuál de los clones de $a_i$ esté emparejado en la parte $1$.
+
+\textbf{Ahora estamos listos para probar la NP-completitud de 3GSM mostrando que $I$ tiene un matrimonio estable si y solo si $T_0$ tiene un emparejamiento completo de $I_0$.}
+
+\subsection{Teorema 1:}
+Si $T_0$ contiene un emparejamiento completo $M_0$ de la instancia 3DM $I_0$, entonces la instancia 3GSM construida $I$ tiene un matrimonio estable $M$.
+\\
+
+Mostramos que es posible construir un matrimonio estable $ M $. Comenzamos agregando $\alpha_1 \beta_1 \delta_1$ y $\alpha_2 \beta_2 \delta_2$ a $M$.
+
+Por cada elemento de $a_i \in A_0$, los únicos triplos en $T_0 $ que contienen $a_i$ son $a_i b_{j_1} d_{l_1} $, $a_i b_{j_2} d_{l_2} $
+y $a_i b_{j_3} d_{l_3} $ usando las notaciones descritas en la tabla anterior. Uno de esos triplos esta en $M_0$.
+
+Añadir a M si:
+\begin{itemize}
+    \item $a_i[1]b_{j_1}d_{l_1}$, $a_1[2]w_{a_i}x_{a_i}$, $a_i[3]y_{a_i}z_{a_i}$ If: $a_i b_{j_1} d_{l_1} \in M_0$ 
+    \item $a_i[1]w_{j_i}x_{a_i}$, $a_1[2]b_{j_2}d_{l_2}$, $a_i[3]y_{a_i}z_{a_i}$ If: $a_i b_{j_2} d_{l_2} \in M_0$ 
+    \item $a_i[1]w_{a_i}x_{a_i}$, $a_1[2]y_{a_i}z_{a_i}$, $a_i[3]b_{j_3}d_{l_3}$ If: $a_i b_{j_3} d_{l_3} \in M_0$ 
+\end{itemize}
+
+Dado que $M_0$ es un emparejamiento completo, la construcción anterior garantiza que los elementos de $B$ y $D$ que se originan de $B_0$ y $D_0$ se usen exactamente una vez en M. 
+Es fácil verificar que todos los demás elementos de $A$, $B$ y $D$ también se usan exactamente una vez. Por lo tanto,$M$ es un matrimonio.
 
 
+Para demostrar que $M$ es estable, es suficiente mostrar que ningún elemento de $A$ es un componente de un triplo desestabilizador. $\alpha_1$ y $\alpha_2$ satisfacen esta condición de inmediato porque
+están emparejados con sus primeras opciones de preferencia.
 
+Refiriéndose a la Figura 3, cada uno de los elementos restantes de $A$
+está emparejado con un par ubicado a la izquierda del límite. Por lo tanto, los únicos pares
+que pueden formar triplos desestabilizadores son $w_{a_i} x_{a_i}$ y $y_{a_i}z_{a_i}$. Sin embargo,
+el emparejamiento de los $w_{a_i}$ ($y_{a_i}$) es una de sus tres primeras
+opciones de preferencia.
+Estas tres opciones están en orden inverso
+exacto a las de $x_{a_i}$ ($z_{a_i}$). Esto elimina a $w_{a_i}$ y $y_{a_i}$ de participar en cualquier
+triplo desestabilizador.
+
+\subsection{Teorema 2:}
+Si la instancia 3GSM $I$ tiene un matrimonio estable,
+entonces $T_0$ contiene un emparejamiento completo de la instancia 3DM $I_0$.
+\textbf{Demostración:}
+Supongamos que $I$ tiene un matrimonio estable $M$. El Lema 2 requiere que $M$ incluya a 
+$\alpha_1 \beta_1 \delta_1$  y $\alpha_2 \beta_2 \delta_2$ . El Lema 3 requiere que, para cada $a_i \in A_0$,
+dos de los clones de $a_i$ se emparejen con $w_{a_i} x_{a_i}$ y $y_{a_i} z_{a_i}$.
+Sea $M_0$ el emparejamiento que resulta cuando $M$ se restringe a los elementos
+restantes que no tienen emparejamientos predeterminados.
+
+Para cada ai en $a_i \in A_0$, solo queda un clon de $a_i$ por emparejar en $M_0$.
+Por lo tanto, eliminaremos la distinción entre un clon de $a_i$ y el $a_i$ que representa,
+sin el riesgo de introducir ninguna ambigüedad en $M_0$.
+Los elementos que participan en $M_0$ pueden caracterizarse como
+exactamente aquellos elementos de $A_0$, $B_0$ y $D_0$.
+Dado que $M_0$ es un subconjunto de un matrimonio,representa un emparejamiento completo.
+
+
+Debido a la ausencia de tríos desestabilizadores,
+cada $a_i$ en $M_0$ debe emparejarse con una opción 
+de preferencia ubicada a la izquierda del límite. 
+La construcción de $I$, como se ilustra en la Figura 3, 
+restringe esta opción al tercer elemento de la lista de preferencias, 
+ya que los dos primeros elementos ya están emparejados. 
+Además, el triplo formado por $a_i$ y este elemento está contenido en
+$T_0$. 
+Por lo tanto, cada trío en $M_0$ también es un trío en $T_0$, y $M_0$ es el emparejamiento completo deseado contenido en T 0.
 
 \end{document}
+
 
