@@ -3,6 +3,8 @@
 \usepackage{graphicx}
 \usepackage{longtable}
 \usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{float}
 
 \title{Ejercicios de Programación Dinámica}
 \author{Francisco Vicente Suárez Bellón}
@@ -11,9 +13,101 @@
 \begin{document}
 
 \maketitle
+\pagebreak
+\section*{Definición formal del problema}
+Hay $n$ bolas. Están dispuestas en una fila. Cada bola tiene un color (para conveniencia, un número entero) y un valor entero. El color de la $i$-ésima
+bola es $c_i$ y el valor de la $i$-ésima bola es $v_i$.\\
+La ardilla Liss elige algunas bolas y forma una nueva secuencia sin cambiar el orden relativo de las bolas. Ella quiere maximizar el valor de esta secuencia.
+El valor de la secuencia se define como la suma de los siguientes valores para cada bola (donde *a* y *b* son constantes dadas): 
+\begin{enumerate}
+    \item Si la bola no está al principio de la secuencia y el color de la bola es el mismo que el de la bola anterior, suma (el valor de la bola ) x $a$ .
+    \item De lo contrario, suma(el valor de la bola) x $b$.
+\end{enumerate}
 
-\section*{Problema}
-El problema trata explícitamente de qué subsecuencia puedo tomar tal que maximice el valor. Si se pudieran generar todas las subsecuencias posibles, entonces se pudiera encontrar cuáles son las óptimas.
+
+Se te dan $q$ consultas. Cada consulta contiene dos enteros $a_i$ y $b_i$ .
+
+Para cada consulta, encuentre el valor máximo de la secuencia que puede crear cuando $a=a_i$ y $b=b_i$ .
+
+\textbf{Nota:} Ten en cuenta que la nueva secuencia puede estar vacía, y el valor de una secuencia vacía se define como cero.
+
+
+\pagebreak
+
+\section*{Solución Fuerza Bruta}
+El problema puede tratarse como en cada bola tomar la decisión de añadirla a la subsecuencia. Si se generan todas las subsecuencias posibles entonces
+se puede seleccionar la de valor máximo.
+
+Puede ser visto como generar todas las cadenas binarias donde en caso de la bola en la posicion i sea $True$ entonces se añadirá a la subsecuencia y en caso contrario no se añadirá
+aquí seleccionar el conjunto de estas cuyo valor sea máximo (Cualquier subsecuencia de este conjunto a efectos del problema son iguales dado que tiene igual valor).
+
+\begin{itemize}
+    \item Esta solución es exponencial $O(2^n)$
+\end{itemize}
+
+\subsection*{Podas}
+\begin{itemize}
+    \item Se puede pensar en no añadir una bola dado que el valor multiplicado por $a$ o $b$ lo que corresponda es $< 0$, lo que descartaría casos que no llevan al óptimo.
+    \item Sin embargo, en ciertos casos es necesario, por ejemplo:
+\end{itemize}
+
+\[
+\begin{array}{|c|c|c|c|c|c|c|}
+\hline
+v & 1 & -2 & 1 & 4 & 0 & -1 \\
+\hline
+c & 1 & 2 & 1 & 2 & 1 & 1 \\
+\hline
+index & 0 & 1 & 2 & 3 & 4 & 5 \\
+\hline
+\end{array}
+\]
+
+Para $a=2$ y $b=1$, escoger los índices 0-1-8 es conveniente.
+\begin{itemize}
+    \item Esto se debe a que el valor máximo si la subsecuencia termina con el color $c$ es $-\infty$, dado que nunca se ha escogido ese color.
+    \item Si ese color ya tuvo representación en alguna subcadena explorada, poner un negativo después de multiplicar con $a$ o $b$ no puede llevar a una solución óptima.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+
+%Aquí hay un ejemplo de código: \lstinline|print("Hola, mundo")|.
+\begin{lstlisting}[language=Python]
+    def solver(n,q,v,c):
+    resultado = generar_combinaciones(n)
+
+    for _ in range(q):
+        a, b = map(int,input().split())
+        chains:list[Manager]=[]
+        for combinacion in resultado:
+            manager=Manager(a=a,b=b)
+            for i in range(n):
+                if not combinacion[i]:
+                    continue
+                manager.add(index=i,value=v[i],color=c[i])
+            chains.append(manager)
+        chains=sorted(chains,reverse=True)
+        #print(chains)
+        print(f"El mayor valor es {chains[0].value}")
+    \end{lstlisting}
+\end{figure}
+\subsection{Correctitud del algoritmo}
+Como tenemos un algoritmo que genera todas las cadenas binarias de longitud $n$ entonces solo tenemos que recorrer esa combinación
+y tener esa subsecuencia, después ordenamos desde mayor a menor por lo cual tenemos las subsecuencias de mayor valor
+\subsection{Complejidad}
+\subsubsection{Temporal}
+\begin{itemize}
+    \item Obtener todas las cadenas binarias tiene un costo de $O(2^n)$
+\end{itemize}
+\subsubsection{Espacial}
+\begin{itemize}
+    \item Tener todas las cadenas binarias tiene un coste de $O(n*(2^n))$ 
+\end{itemize}
+
+\pagebreak %% Pasar a reformular el problema
+
+\section*{Reformular el problema}
+
 \begin{itemize}
     \item En nuestro caso, cualquier subsecuencia óptima tiene el mismo valor, por lo que todo elemento del conjunto óptimo global es óptimo igual.
     \item Pueden existir múltiples óptimos:
@@ -42,46 +136,53 @@ El máximo puede ser con 0-2-3 o 0-1-3, que es 7.
     \item Un valor de cero en una bola no afecta si está al final de la cadena máxima, pero puede influir si está en el medio, ya que la siguiente bola puede ser de color análogo, haciendo que esta esté en la cadena máxima.
 \end{itemize}
 
-\section*{Solución Fuerza Bruta}
-Si generamos todas las subcadenas posibles, entonces podemos saber cuáles nos dan el máximo y tomar este valor. El algoritmo sería similar a generar todas las cadenas binarias, ya que es análogo a poner esa bola como última en la secuencia.
-\begin{itemize}
-    \item Esta solución es exponencial, por lo tanto, no es eficiente ni cerca de serlo.
-\end{itemize}
 
-\subsection*{Podas}
+\section*{Notación}
 \begin{itemize}
-    \item Se puede pensar en no añadir una bola dado que el valor multiplicado por $a$ o $b$ lo que corresponda es $< 0$, lo que descartaría casos que no llevan al óptimo.
-    \item Sin embargo, en ciertos casos es necesario, por ejemplo:
-\end{itemize}
-
-\[
-\begin{array}{|c|c|c|c|c|c|c|}
-\hline
-v & 1 & -2 & 1 & 4 & 0 & -1 \\
-\hline
-c & 1 & 2 & 1 & 2 & 1 & 1 \\
-\hline
-index & 0 & 1 & 2 & 3 & 4 & 5 \\
-\hline
-\end{array}
-\]
-
-Para $a=2$ y $b=1$, escoger los índices 0-1-8 es conveniente.
-\begin{itemize}
-    \item Esto se debe a que el valor máximo si la subsecuencia termina con el color $c$ es $-\infty$, dado que nunca se ha escogido ese color.
-    \item Si ese color ya tuvo representación en alguna subcadena explorada, poner un negativo después de multiplicar con $a$ o $b$ no puede llevar a una solución óptima.
+    \item $c[i]$ color de la bola $i$.
+    \item $W_i$ cadena que termina con la bola $i$
+    \item $W_i^*$ cadena de valor máximo que termina con la bola $i$
+    \item $Col[W_i]$ color de la última bola.
+    \item $W_{c_i}$ subcadena que termina en el color $c_i$
+    \item $Val[W_{c_i}]$ Valor de la subcadena $W_{c_i}$
+    \item $v[i]$ valor de la pelota $i$
+    \item $W_{c_i}^*$  cadena de valor óptimo para el color $i$
 \end{itemize}
 
 \section*{Ideas para Optimizar la Solución}
-\begin{itemize}
-    \item Si tienes una bola de color $c[i]$, que con alguna antecesora de color $c[i-1]$ mejora el valor de la secuencia, puedes terminar la secuencia con ese color.
-    \item Si una bola tiene valor $=0$, puede afectar el valor óptimo dependiendo de si se añade o no, y su valor puede influir en las siguientes bolas.
-\end{itemize}
+Dado que el problema de decisión de poner o no la bola $i$ depende exclusivamente del valor de las cadenas de $Val[W_{c_i}]$
+por cada color $c_i$.\\
+En cada bola $i$ el problema se puede resumir a que subcadena $W_{c_i}$ (puede ser una subcadena vacía) 
+se unirá esta bola para aumentar el valor.
 
-No importa en qué momento estemos, siempre podemos tener, para cada color, el conjunto de subsecuencias máximas hasta el momento. 
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        \dots \dots & $bola_i$\\
+        \hline
+    \end{tabular}
+    \caption{Ejemplo de como se debe unir la bola}
+\end{table}
+
+Por tanto se debe tomar la decisión de tomar el máximo valor entre:
+\begin{itemize}
+    \item $max(W_j^*+b*v[i],W_k^*+a*v[i],b*v[i])$ para todo  $Col[W_j^*] \neq c[i] $ y  $Col[W_k^*] = c[i] $
+\end{itemize}
+y al recorrer todas las bolas posibles en cada una de ellas tenemos el $max(Val[W_{c_i}])$  para cada bola $i$
+por tanto el valor óptimo de la solución es $max(max(Val[W_{c_i}]),0)$ para toda $i$.
+
+Entonces podemos reducir este problema a que para cada bola $i$ tenemos que calcular para toda $(j<i)$ la  $W_j^*$
+tal que sea máximo el valor de poner a la bola $i$ como último valor de esa subcadena  $W_j^*$.
+
 
 \section*{Algoritmos Propuestos para Optimizar en Tiempo Polinomial}
-Dado que llevamos las subsecuencias óptimas (una por cada color) hasta la bola $i$, podemos para cada color conocer si es conveniente añadir esa bola con la última bola de esa subsecuencia.
+Siguiendo la idea anterior no es necesario para cada bola $i$ cual es el valor con cada  $W_j^*$ $(j<i)$ dado que si tomamos:
+\begin{itemize}
+     \item $max(W_{c_j}+b*v[i],W_{c_i}+a*v[i],b*v[i])$ para 
+\end{itemize}
+
 
 \subsection*{Algoritmo en $O(n \cdot c)$}
 \subsubsection*{Idea}

@@ -17,8 +17,8 @@ q=1
 v=[-3, 6, -1, 2]
 c=[1, 2, 3, 1]
 N=max(c)+1
-dp=[-INF]*N
-color_can=[False]*len(dp)
+#dp=[-INF]*N
+#color_can=[False]*len(dp)
 for _ in range(q):
     #a, b = map(int,input(f"Ingresa a y b separados por un espacio: ").split())
     #a, b = map(int, sys.stdin.readline().split())
