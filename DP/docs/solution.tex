@@ -138,23 +138,28 @@ El máximo puede ser con 0-2-3 o 0-1-3, que es 7.
 
 
 \section*{Notación}
-\begin{itemize}
-    \item $c[i]$ color de la bola $i$.
-    \item $W_i$ cadena que termina con la bola $i$
-    \item $W_i^*$ cadena de valor máximo que termina con la bola $i$
-    \item $Col[W_i]$ color de la última bola.
-    \item $W_{c_i}$ subcadena que termina en el color $c_i$
-    \item $Val[W_{c_i}]$ Valor de la subcadena $W_{c_i}$
-    \item $v[i]$ valor de la pelota $i$
-    \item $W_{c_i}^*$  cadena de valor óptimo para el color $i$
+\begin{itemize} 
+  \item $W[j]$ Conjunto de subcadenas que terminan en j.
+  \item $W^*[j]$ Conjunto de subcadenas que terminan en j con valor máximo.
+  \item $w^*_j$ subcadena representante del conjunto $W^*[j]$.
+  \item $Val[w]$ valor de la cadena $w$
+  \item $Col[i]$ color de la bola $i$
+  \item $Col[w]$ color de la última bola de la cadena w.
+  \item $W^*_\alpha[i]$ Conjunto de cadenas de valor máximo de color $\alpha$ hasta la bola $i$
+  \item $w^*_\alpha[i]$ subcadena que es representante del conjunto $W^*_\alpha[i]$ 
+  \item $End[i]$ Conjunto de subcadenas que donde terminan con la $bola[i]$
+  \item $End^*[i]$ Conjunto de  subcadenas de valor máximo que terminan con la  $bola[i]$
+  
 \end{itemize}
 
-\section*{Ideas para Optimizar la Solución}
-Dado que el problema de decisión de poner o no la bola $i$ depende exclusivamente del valor de las cadenas de $Val[W_{c_i}]$
-por cada color $c_i$.\\
-En cada bola $i$ el problema se puede resumir a que subcadena $W_{c_i}$ (puede ser una subcadena vacía) 
-se unirá esta bola para aumentar el valor.
+\section*{Optimizar la Solución}
+ 
 
+Podemos ver el problema como un problema de decisión en el cual que subcadena $W$ (puede ser la subcadena vacía) unimos la bola $i$
+por tanto para ello tenemos que ver por cada bola $j$ $(j<i)$ cual es la subcadena con la cual podemos unir $i$ y que 
+maximize el valor de esta.
+Inicialmente vemos que para toda $w^*_j \in W^*[j] $, $w^`=w^*_j + bola[i]$ el $Val[w^`]$ por tanto cualquier $w^*_j$
+añadir $bola[i]$ será el mismo valor
 
 \begin{table}
     \centering
@@ -166,39 +171,183 @@ se unirá esta bola para aumentar el valor.
     \caption{Ejemplo de como se debe unir la bola}
 \end{table}
 
-Por tanto se debe tomar la decisión de tomar el máximo valor entre:
+\subsection{Lema 1: }
+Para todo $w^*_j \in W^*[j] $ $w^`=w^*_j + bola[i]$  el $Val[w^`]$ sera el mismo.
+
+\subsection{Nota}
+Dado lo anterior es evidente que una vez computado el $W^*[j]$ no es necesario recomputarlo en el resto de los llamados.
+Por lo tanto estamos ante una subestrutura óptimam, de las cuales una vez calculado se puede guardar en una caché
+de aquí partirá el resto de nuestras Ideas
+
+
+\section{Algoritmo en $O(n * c )$}
+Dado que anteriormente vimos que existe una subestructura óptima con respecto a guardar en cada bola cual es la mejor 
+subcadena en la cual ella es la última bola.
+Partiendo de esta idea, en el problema no tiene importancia en si cual es la bola anterior, solo nos importa cual es la cadena $w^*_\alpha[i]$
+por cada color. 
+
+
+\subsection{Lema 2:}
+Para todas subcadenas hasta $i$ con igual color la que se elegirá para unir a $bola[i]$ es la de mayor valor.
+Sean $h,q$ bolas; $h,q <i$ y $Col[h] = Col[q]$
+Si $Val[w^*_h] = Val[w^*_q]$ entonces al momento de elegir en la bola[i] cualquiera de las dos cadenas son iguales
+Si $Val[w^*_h] < Val[w^*_q]$ entonces siempre elegiremos a la $w^*_q$ dado que al poner a la $bola[i]$ al final de estas
+la de mayor valor será óptima para las cadenas que terminan en el Col[h].
+\subsubsection{Algoritmo}
+Ahora conociendo que para cada color $\alpha$ la subcadena que se seleccionará para unir a la $bola[i]$.
+Osea  $w^*_\alpha[i] \in End[i]$ por lo tanto $End^*[i]$ están las subcadenas de los colores a los cuales añadir la $bola[i]$ hacen que su 
+valor sea óptimo para esta.
+
+Dado lo anterior podemos elaborar un algoritmo de programación dinámica donde iteraremos por cada bola , en ella iteramos por cada color, 
+para ir actualizando el valor de la cadena máxima contando con la $bola[i]$ con una chaché $dp[\alpha]$ donde guarda el valor de la cadena de valor máximo
+en el color $\alpha$ de la siguiente forma:
+
 \begin{itemize}
-    \item $max(W_j^*+b*v[i],W_k^*+a*v[i],b*v[i])$ para todo  $Col[W_j^*] \neq c[i] $ y  $Col[W_k^*] = c[i] $
+  \item $ dp[Col[bola[i]]]=max(dp[Col[bola[i]]],dp[\beta]+(b*v[i]), dp[Col[bola[i]]]+a(a*v[i]), b*v[i])$ para todo color $\beta \neq Col[bola[i]]$
 \end{itemize}
-y al recorrer todas las bolas posibles en cada una de ellas tenemos el $max(Val[W_{c_i}])$  para cada bola $i$
-por tanto el valor óptimo de la solución es $max(max(Val[W_{c_i}]),0)$ para toda $i$.
 
-Entonces podemos reducir este problema a que para cada bola $i$ tenemos que calcular para toda $(j<i)$ la  $W_j^*$
-tal que sea máximo el valor de poner a la bola $i$ como último valor de esa subcadena  $W_j^*$.
+\subsection{Subestructura Óptima}
+Como se ha visto la función de asignacion de $w^*_\alpha[i]$ depende de los valores ya precomputados de las bolas que se han visto con anterioridad.
+Por tanto supongamos que ya computado la subcadena de valor máximo del color de la $bola[i]$ hasta la $bola{i}$ (Ya se computo esta)
+es $s^*$ será el máximo entre lo ya computado entre todos los colores (también puede ser que lo subóptimo sea empezar en esta bola para este color en específico )
+Por tanto si obtengo una solución optima global del problema $>0$ es porque la subcadena es distinta del vacío.
 
-
-\section*{Algoritmos Propuestos para Optimizar en Tiempo Polinomial}
-Siguiendo la idea anterior no es necesario para cada bola $i$ cual es el valor con cada  $W_j^*$ $(j<i)$ dado que si tomamos:
+\subsection{Correctitud de la DP}
+Para demostrar que la solución por DP funciona vamos a realizar una inducción sobre la cantidad de elementos
+\textbf{Caso Base : }
 \begin{itemize}
-     \item $max(W_{c_j}+b*v[i],W_{c_i}+a*v[i],b*v[i])$ para 
+    \item Para $n=1$ Se reduce a $max(b*v[i],0)$
+    \item Para $n=2$ Vemos que se cumple la propiedad dado que la primera bola y su color respectivo se basan en caso base anterior 
+     por lo tanto el color que representa la primera bola tiene el subóptimo hasta dicha bola, por tanto la 2da bola dada la propia función solo puede mejorar 
+     o igualar la solución de los colores precomputados
+
+\subsubsection{Hipótesis :}
+Supongamos que para todo array con k bolas se cumple la propiedad de dp
+\subsubsection{Tesis:}
+Supongamos que tenemos un array de tamaño k+1 bolas, y lo separamos en 2 secciones, $x,y$ donde $x$ tendrá k elementos y $y$ un elemento
+por hipótesis x tiene precomputado correctamente el dp.
+Hasta x se tienen precomputado correctamente por cada color cual es su subsecuencia máxima, como anteriormente se ha demostrado que al añadir una
+bola para maximizar la subcadena máxima es suficiente con el valor de las subcadenas óptimas para cada color precomputadas hasta ese momento.
+por tanto para unir a $y$ buscamos los valores de dp por cada color (incluido el vacío) y computamos la función de matcheo y elegimos la de mayor valor.
+
+     
 \end{itemize}
 
 
-\subsection*{Algoritmo en $O(n \cdot c)$}
-\subsubsection*{Idea}
-Supongamos que tenemos, por cada color, el valor máximo de todas las cadenas hasta el momento que terminan con ese color. Si recorremos el array de bolas, por cada bola determinamos si el valor máximo de nuestro color es menor que unirnos con alguna subsecuencia que termine en otro color.
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[language=Python]
+        for _ in range(q):
+            
+            dp=[-INF]*(N)
+            color_can=[False]*len(dp) # Llevamos la 
 
-\subsubsection*{Demostración}
-Cada vez que seleccionamos una bola, miramos cuál es la bola que debe precederla. Comparando todos los colores, si el valor de alguno es mayor que el de nuestro propio color, actualizamos.
+            for i in range(n): # Por cada elemento
+                ci=c[i]
+                last=dp[ci]
 
-\subsection*{Algoritmo en $O(n)$}
-\subsubsection*{Notación}
-\begin{itemize}
-    \item $Max_1$: Valor de las cadenas óptimas hasta el momento.
-    \item $Max_2$: Segundo mejor valor de las cadenas óptimas hasta el momento.
-    \item $v[i]$: Valor de la bola $i$.
-\end{itemize}
+                for col in range(1,len(dp)):
 
-\subsubsection*{Idea}
-En cada iteración nos interesa conocer el valor de las subcadenas óptimas que terminan en diferentes colores. Si dos colores tienen el mismo valor óptimo hasta el momento, los tratamos como equivalentes, y guardamos el valor máximo de todas las subcadenas óptimas en la variable $Max_1$, y el segundo mejor valor en $Max_2$.
+                    if col == ci and color_can[ci]:
+
+                        s=last if last>-INF else 0
+                        dp[ci]=max(dp[ci],s+(a*v[i])) 
+                    else:
+                        s=dp[col] if dp[col]>-INF else 0
+                        dp[ci]=max(dp[ci],s+(b*v[i]))
+
+                dp[ci]=max(dp[ci],b*v[i])
+                color_can[ci]=True
+
+            print(max(max(dp),0))
+    \end{lstlisting}
+\end{figure}
+ 
+\subsection{Demostración de la correctitud del algoritmo}
+En este algoritmo por cada bola se recorre cada uno de los colores actualizando la dp, es evidente que para la primera
+ocurrencia de un color se rellena por primera vez el valor de cada color con el factor $b*v[i]$.
+Para cada bola hay 3 opciones.
+\begin{enumerate}
+    \item Que exista una subcadena que termine en mi mismo color al cual al yo ponerme al final de este mejores la subcadena.
+    \item Que añadirme en el final de otra subcadena un color distinto al mio mejore con respecto al subóptimo que tenía
+    \item Que comenzar la subcadena pueda ser mas ventajoso
+\end{enumerate}
+
+
+\subsection{Complejidad}
+\subsubsection{Temporal:}
+Como se itera por cada bola $O(n)$ y por cada una se itera por todos los colores $O(C)$ y todas las operaciones dentro
+de este bucle son constantes en tiempo. El algoritmo es $O(c*n)$.
+
+\subsubsection{Espacial:}
+Dado que la creación de las caches se suguiere hacerse con arreglos (los cuales permiten indexar en $O(1)$) 
+El coste de estos son $O(C)$ siendo $C$ la cantidad de colores distintos.
+
+\section*{Algoritmo en $O(n)$}
+Basandonos en las mismas ideas demostradas en el anterior algoritmo de programación dinámica. 
+Para poder eliminar cómputo innecesario podemos fijarnos en el caso que la bola a añadir se quiere poner al
+final de una subcadena que termina en un color distinto a este por lo tanto el valor de crear esa nueva subcadena es de
+$\text{valor subcadena color distinto}+(b*\text(valor de esa bola))$ por lo tanto intuitivamente si maximizamos el valor de la 
+subcadena a la cual nos unimos entonces será la mejor entre todas las posibles.
+
+Entonces si llevamos la cuenta de cual es el valor de las subcadenas máximas hasta cada bola, solo nos quería tocar el caso
+que la bola tenga un color igual al del $max$, por tanto debemos llevar el $max_1$ (máximo total) y $max_2 $(segundo mayor máximo)
+Dado que se compara en este caso a añadir esa bola con una subcadena con valor  $max_2 $ (Aquí también se tiene en cuenta el empezar la cadena desde esa bola).
+\\
+\textbf{Nota:} $max_1 $ y $max_2 $ son $\geq 0$
+
+\subsection{Lema 3:}
+Demostrar que dado una$ bola[i]$ de color $Col[bola[i]]$ de todas las subcadenas que se pueden formar tal que termine con esta bola
+y la penúltima bola tenga un color distinto a la $bola[i]$  la de mayor valor, $s^*$ es la $s^*-bola[i]$ con mayor valor.
+
+Supongamos que tenemos $s^*$ que esta formada por $s_1+i$, $s_1$, $Col[w_1] \neq Col[bola[i]]$ no es la de mayor
+valor entre las que tienen distinto color. 
+Sea $s_2$, $Col[s_2] \neq Col[bola[i]]$ y $s_2$ tiene valor máximo entre las subcadenas que no terminan en  $Col[bola[i]]$
+
+Entonces si $Val[s^*]= Val[s_1]+(b*v[bola[i]])$ y $Val[s_m]= Val[s_2]+(b*v[bola[i]])$ , $Val[s_1]<Val[s_2]$ Contradiccion.
+$s_m$ máxima.
+
+Dado que ahora no es necesario computar por las cadenas terminadas en distinto color para conocer si 
+añadir la bola mejorará la dp entonces nos hay que analizar el caso en que la mejor solución sea mi propio color
+por tanto debo comprobar con las 2das mejores soluciones para verificar que elección es más conveniente.
+
+
+
+\subsection{Subestructura Óptima}
+La subestrutura óptima es análoga a la propuesta anteriormente, aunque en este caso aplicamos en Lema 3, por tanto
+no hay afectación en la estructura de esta
+\subsection{Correctitud de la DP}
+Como en este algoritmo continuamos utilizando la misma idea dinámica anterior aplicando el Lema 3, nos queda añadir que 
+no es necesario iterar por todos los colores dado que la aplicacion antes mencionada hacer que los colores distintos a la bola no 
+sean necesarios. Y el caso de que el color de esa bola sea igual al del máximo se tiene el $max_2 $ para comparar si es mejor.
+
+\subsection{Código}
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[language=Python]
+        for _ in range(q):
+    
+            mx1 = 0
+            mx2 = 0
+
+            ans = [-INF] * N  # Inicializamos el arreglo ans con -INF
+
+            for i in range(n):
+                if mx1 == ans[c[i]]:
+                    ans[c[i]] = max(ans[c[i]], ans[c[i]] + a * v[i])
+                    ans[c[i]] = max(ans[c[i]], mx2 + b * v[i])
+                    mx1 = max(mx1, ans[c[i]])
+                else:
+                    ans[c[i]] = max(ans[c[i]], ans[c[i]] + a * v[i])
+                    ans[c[i]] = max(ans[c[i]], mx1 + b * v[i])
+                    mx2 = max(mx2, ans[c[i]])
+
+                    if mx2 > mx1:
+                        mx1, mx2 = mx2, mx1
+
+            print(mx1)
+    \end{lstlisting}
+\end{figure}
+ 
 \end{document}
