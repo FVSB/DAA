@@ -5,26 +5,24 @@ INF = int(1e15)
 
 # Lectura de entrada
 # input para el codeforces 
-#n, q = map(int, sys.stdin.readline().split())
-#v = list(map(int, sys.stdin.readline().split()))
-#c = list(map(int, sys.stdin.readline().split()))
+n, q = map(int, sys.stdin.readline().split())
+v = list(map(int, sys.stdin.readline().split()))
+c = list(map(int, sys.stdin.readline().split()))
 # Input normal para entrada mas comoda
 #n, q = map(int, input("Ingresa n y q separados por un espacio: ").split())
 #v = list(map(int, input(f"Ingresa {n} valores para v separados por espacios: ").split()))
 #c = list(map(int, input(f"Ingresa {n} valores para c separados por espacios: ").split()))
-n=6
-q=1
-
-
-
-v=[1, -2, 3, 4, 0, -1]
-c=[1, 2, 1, 2, 1, 1]
-dp=[-INF]*(max(c)+1)
+#n=6
+#q=1
+#v=[1, -2, 3, 4, 0, -1]
+#c=[1, 2, 1, 2, 1, 1]
+dp=[-INF]*N
 color_can=[False]*len(dp)
 for _ in range(q):
     #a, b = map(int,input(f"Ingresa a y b separados por un espacio: ").split())
-    a=-2
-    b=1
+    a, b = map(int, sys.stdin.readline().split())
+    #a=1
+    #b=0
     for i in range(n): # Por cada elemento
         ci=c[i]
         last=dp[ci]
@@ -39,6 +37,11 @@ for _ in range(q):
                 s=dp[col] if dp[col]>-INF else 0
                 dp[ci]=max(dp[ci],s+(b*v[i]))
                 #dp[ci]=max(dp[ci],dp[col]+b*v[i])
+                
+        #Comprobar si todo lo que trate hacer antes es peor que empezar yo como una cadena
+        if dp[ci]<b*v[i]:
+            print(i)
+        dp[ci]=max(dp[ci],b*v[i])
         color_can[ci]=True        
     print(max(max(dp),0))
             
