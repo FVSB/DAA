@@ -331,7 +331,7 @@ sean necesarios. Y el caso de que el color de esa bola sea igual al del máximo 
             mx1 = 0
             mx2 = 0
 
-            ans = [-INF] * N  # Inicializamos el arreglo ans con -INF
+            ans = [-INF] * N 
 
             for i in range(n):
                 if mx1 == ans[c[i]]:
@@ -349,5 +349,36 @@ sean necesarios. Y el caso de que el color de esa bola sea igual al del máximo 
             print(mx1)
     \end{lstlisting}
 \end{figure}
- 
+
+\subsection{Correctitud del algoritmo}
+\textbf{Nota:}
+$max_1, max_2 \geq 0$ durante todo el algoritmo por tanto nunca abrá en un color soluciones subóptimas negativas 
+por lo cual las operaciones que hagamos dependen del factor $a$ o $b$ y del valor de la bola a añadir para determinar 
+si debe actualizar la caché.
+\\
+El algoritmo itera por todas las posibles bolas, tratando a las bolas su color tienen a una subsecuencia con valor 
+subóptimo de forma tal que comparan cual de las dos situaciones es mas beneficioso:
+\begin{enumerate}
+    \item Alargar una subsecuencia que terminaba en mi mismo color
+    \item Alargar una subsecuencia que tenia el 2do mejor valor.
+\end{enumerate}
+ En el 2do caso el $max_2 $ puede ser igual al $max_ 1$ en el caso que existan más de un color en ese momento cuyas
+ subsecuencias que teminan en este son las mejores en terminos de valor.
+\textbf{Nota:} El $max_1$ nunca disminuye en esta opción.
+
+ En el caso que color de la bola a añadir no tenga una subsecuencia máxima entonces compruebo entre:
+ \begin{enumerate}
+    \item Añadir a la subsecuencia de mayor valor que termina en igual color
+    \item Añadirme a la subsecuencia con mejor valor y distinto color final (Aplicar lema 3).
+ \end{enumerate}
+ Aca se actualiza el $max_2$ con el objetivo de continuar con las propiedades necesarias demostradas anteriormente.
+ Para mantener las invariantes de los máximos se realiza el swap si es necesario.
+
+ \subsection{Complejidad}
+\subsubsection{Temporal}
+La inialización de la caché del dp es $O(C)$ pero $C \leq N$ en este caso
+El algoritmo hace un bucle por todos n elementos y las operaciones son en $O(1)$ por lo tanto 
+el coste es $O(n)$
+\subsubsection{Espacial}
+La inialización de la caché del dp es $O(C)$ pero $C \leq N$.
 \end{document}

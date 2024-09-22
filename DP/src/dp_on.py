@@ -17,7 +17,7 @@ n, q = map(int, input("Ingresa n y q separados por un espacio: ").split())
 v = list(map(int, input(f"Ingresa {n} valores para v separados por espacios: ").split()))
 c = list(map(int, input(f"Ingresa {n} valores para c separados por espacios: ").split()))
 
-
+N=max(c)+1
 # Ajustamos los índices de c para que empiecen desde 0
 c = [x - 1 for x in c]
 
