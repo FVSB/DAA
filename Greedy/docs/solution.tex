@@ -7,6 +7,8 @@
 \usepackage{amsfonts}
 \usepackage{listings}
 \usepackage{float}
+
+
 \title{Ejercicio Greedy DAA}
 \author{Francisco Vicente Suárez Bellón C-412}
 \date{Septiembre de 2024}
@@ -219,5 +221,95 @@ $O(T)$ donde $T$ es la cantidad de troncos en el caminos
 dado que esta lo utiliza para el proximo salto
 $T \leq n$
 
-\end{document}
 
+\section*{Solución de programación dinámica}
+\textbf{Solución usando programación dinámica}: $dp_i$ — el número mínimo de metros que deben ser nadados para llegar a la celda $i$-ésima. El caso base de la programación dinámica es $dp_0 = 0$. Luego, la regla de actualización es:
+
+\[
+dp_i = \min \left\{ 
+  \begin{array}{ll}
+    dp_{i-1} + 1 & \text{si } A_i = \text{'W'} \\
+    \min(dp_j) & \text{para todo } j, \text{ donde: } \max(0, i-m) \leq j < i \text{ y } A_j = \text{'L'}
+  \end{array}
+\right.
+\]
+
+
+
+
+
+\subsection*{Subestructura Óptima}
+
+La subestructura óptima se cumple porque la solución óptima para llegar a una celda \( i \) depende de las soluciones óptimas para las celdas anteriores. Se puede descomponer el problema de la siguiente manera:
+\begin{itemize}
+    \item Si estamos en una celda tronco \textbf{'L'}, el mejor camino hacia esa celda se determina a partir de los caminos óptimos que llegan desde cualquier celda anterior dentro del rango de \( m \) pasos.
+    \item Si estamos en una celda de agua \textbf{'W'}, perderemos energía al pasar por ella, por lo que la solución óptima dependerá del número mínimo de pasos que podamos hacer sin perder demasiada energía.
+\end{itemize}
+
+La solución óptima para cada celda puede ser calculada usando programación dinámica, aprovechando los resultados previamente calculados para las celdas anteriores.
+
+\subsection*{Programación Dinámica}
+
+La idea es construir una tabla \( dp \) donde cada posición \( dp[i] \) representa la energía máxima disponible después de llegar a la celda \( i \).
+
+\subsection*{Reglas de Transición}
+- \textbf{Caso base}: \( dp[0] = k \) (la energía inicial en la primera celda).
+- \textbf{Transición}:
+    \begin{itemize}
+        \item Si la celda es tronco \textbf{'L'}, se considera la energía máxima de las celdas dentro del rango de \( m \) pasos hacia atrás.
+        \item Si la celda anterior fue de agua \textbf{'W'}, la energía se reduce en 1 al pasar.
+    \end{itemize}
+- \textbf{Resultado final}: Si la energía al llegar a la última celda es mayor o igual a 0, es posible llegar al final, de lo contrario, no.
+
+\section*{Código en Python}
+
+El siguiente código implementa la solución descrita:
+\begin{figure}[H]
+    
+
+\begin{lstlisting}[language=Python]
+from collections import deque
+
+t = int(input())  
+for _ in range(t):
+    n, m, k = map(int, input().split())  
+    s = input()  # String del camino ('C', 'L', 'W')
+    
+    dp = [-1] * (n + 2)  
+    dp[0] = k  
+    
+    for i in range(1, n + 2):  
+        if i != n + 1 and s[i - 1] == 'C':  
+            continue
+        
+       
+        for t in range(1, m + 1):
+            if i - t >= 0 and (i - t == 0 or s[i - t - 1] == 'L'): 
+                dp[i] = max(dp[i], dp[i - t])  
+        
+   
+        if i > 1 and s[i - 2] == 'W':
+            dp[i] = max(dp[i], dp[i - 1] - 1)
+    
+   
+    if dp[n + 1] >= 0:
+        print("YES")
+    else:
+        print("NO")
+\end{lstlisting}
+\end{figure}
+
+\section*{Complejidad}
+
+\subsection*{Complejidad Temporal}
+La complejidad temporal del algoritmo es \( O(nm) \), donde:
+\begin{itemize}
+    \item \( n \) es la longitud del camino.
+    \item \( m \) es el número máximo de pasos permitidos hacia atrás.
+\end{itemize}
+Para cada celda \( i \), evaluamos hasta \( m \) celdas anteriores para encontrar la solución óptima, lo que lleva a una complejidad \( O(nm) \).
+
+\subsection*{Complejidad Espacial}
+La complejidad espacial es \( O(n) \), donde \( n \) es la longitud del camino. La tabla \( dp \) utiliza \( n + 2 \) posiciones para almacenar la energía máxima disponible en cada celda. Esto significa que el espacio utilizado por la solución es lineal respecto a la longitud del camino.
+
+\end{document}
