@@ -89,7 +89,6 @@ Para $a=2$ y $b=1$, escoger los índices 0-1-8 es conveniente.
                 manager.add(index=i,value=v[i],color=c[i])
             chains.append(manager)
         chains=sorted(chains,reverse=True)
-        #print(chains)
         print(f"El mayor valor es {chains[0].value}")
     \end{lstlisting}
 \end{figure}
@@ -285,7 +284,7 @@ de este bucle son constantes en tiempo. El algoritmo es $O(c*n)$.
 Dado que la creación de las caches se suguiere hacerse con arreglos (los cuales permiten indexar en $O(1)$) 
 El coste de estos son $O(C)$ siendo $C$ la cantidad de colores distintos.
 
-\section*{Algoritmo en $O(n)$}
+\section{Algoritmo en $O(n)$}
 Basandonos en las mismas ideas demostradas en el anterior algoritmo de programación dinámica. 
 Para poder eliminar cómputo innecesario podemos fijarnos en el caso que la bola a añadir se quiere poner al
 final de una subcadena que termina en un color distinto a este por lo tanto el valor de crear esa nueva subcadena es de
@@ -329,26 +328,25 @@ sean necesarios. Y el caso de que el color de esa bola sea igual al del máximo 
     \centering
     \begin{lstlisting}[language=Python]
         for _ in range(q):
-    
-            mx1 = 0
-            mx2 = 0
+        mx1 = 0
+        mx2 = 0
+        
+        dp = [-INF] * N  
 
-            ans = [-INF] * N 
+        for i in range(n):
+            if mx1 == dp[c[i]]:
+                dp[c[i]] = max(dp[c[i]], dp[c[i]] + a * v[i])
+                dp[c[i]] = max(dp[c[i]], mx2 + b * v[i])
+                mx1 = max(mx1, dp[c[i]])
+            else:
+                dp[c[i]] = max(dp[c[i]], dp[c[i]] + a * v[i])
+                dp[c[i]] = max(dp[c[i]], mx1 + b * v[i])
+                mx2 = max(mx2, dp[c[i]])
 
-            for i in range(n):
-                if mx1 == ans[c[i]]:
-                    ans[c[i]] = max(ans[c[i]], ans[c[i]] + a * v[i])
-                    ans[c[i]] = max(ans[c[i]], mx2 + b * v[i])
-                    mx1 = max(mx1, ans[c[i]])
-                else:
-                    ans[c[i]] = max(ans[c[i]], ans[c[i]] + a * v[i])
-                    ans[c[i]] = max(ans[c[i]], mx1 + b * v[i])
-                    mx2 = max(mx2, ans[c[i]])
+                if mx2 > mx1:
+                    mx1, mx2 = mx2, mx1
 
-                    if mx2 > mx1:
-                        mx1, mx2 = mx2, mx1
-
-            print(mx1)
+        print(mx1)
     \end{lstlisting}
 \end{figure}
 

@@ -40,6 +40,13 @@ Se quiere conocer si existe un matching en M, osea un $M^{'}\subseteq M$ tal que
 
 
 \newpage
+\section{Análisis del problema}
+Aunque el problema para 2-Matching si tiene solución polinomial mediante una red de flujo,
+las restricciones de preferencia de cada elemento de la tupla con las otras duplas posibles no hacen posible su codificación mediante esta técnica.
+
+Inicialmente la misma estructura del problema parece indicar que su solución pasa en el peor de los casos con comprobar todas las
+posibles soluciones, dado que conformar un triplo puede condicionar que otro no sea formado y no puede ser conocido de antemano. 
+Por tanto se procede a examinar si este problema es NP-Completo.
 \section{Demostración de NP-Completitud}
 \textbf{Pasos Principales:}
 \begin{enumerate}

@@ -17,5 +17,3 @@
 
 ### NP=Completo (3-DM)
 - [ Demostración](NP/3-Dimensional_Matching/proof.pdf)
-
-- [Demostración extra](NP/Ejercicio_Extra/proof.pdf)
