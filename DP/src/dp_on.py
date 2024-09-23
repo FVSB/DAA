@@ -1,6 +1,6 @@
 ## Codigo del dp en O(n)
 ## Este si funciona en codeforces
-#https://codeforces.com/contest/264/submission/281751718 link a donde acerto
+#https://codeforces.com/contest/264/submission/282555573 link a donde acerto
 import sys
 
 # Definiciones de constantes
@@ -29,17 +29,17 @@ for _ in range(q):
     mx1 = 0
     mx2 = 0
     
-    ans = [-INF] * N  # Inicializamos el arreglo ans con -INF
+    dp = [-INF] * N  # Inicializamos el arreglo ans con -INF
 
     for i in range(n):
-        if mx1 == ans[c[i]]:
-            ans[c[i]] = max(ans[c[i]], ans[c[i]] + a * v[i])
-            ans[c[i]] = max(ans[c[i]], mx2 + b * v[i])
-            mx1 = max(mx1, ans[c[i]])
+        if mx1 == dp[c[i]]:
+            dp[c[i]] = max(dp[c[i]], dp[c[i]] + a * v[i])
+            dp[c[i]] = max(dp[c[i]], mx2 + b * v[i])
+            mx1 = max(mx1, dp[c[i]])
         else:
-            ans[c[i]] = max(ans[c[i]], ans[c[i]] + a * v[i])
-            ans[c[i]] = max(ans[c[i]], mx1 + b * v[i])
-            mx2 = max(mx2, ans[c[i]])
+            dp[c[i]] = max(dp[c[i]], dp[c[i]] + a * v[i])
+            dp[c[i]] = max(dp[c[i]], mx1 + b * v[i])
+            mx2 = max(mx2, dp[c[i]])
             
             if mx2 > mx1:
                 mx1, mx2 = mx2, mx1
