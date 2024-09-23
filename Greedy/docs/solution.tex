@@ -1,14 +1,21 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
-
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{float}
 \title{Ejercicio Greedy DAA}
 \author{Francisco Vicente Suárez Bellón C-412}
-\date{\today}
+\date{Septiembre de 2024}
 
 \begin{document}
 
 \maketitle
+
+\pagebreak % Salto de pagina de la presentación
 
 \section{Enunciado del Problema}
 
@@ -34,6 +41,8 @@ Inicialmente, ErnKor está en la orilla izquierda y necesita llegar a la orilla 
 \subsection{Pregunta}
 Determine si ErnKor puede llegar a la orilla derecha.
 
+\pagebreak% Salta desde la pagina enunciado del problema
+
 \section{Soluciones}
 
 \subsection{Descripción del problema}
@@ -50,7 +59,33 @@ Para ello puede crearse un código de backtrack donde por cada vez que se puede 
 
 Como optimización de esta idea puede tomarse que en cada llamado recursivo cada vez que se llamen a ver una rama del árbol con respecto a ver a que lugar saltar si la cantidad de metros que se nado es mayor o igual que el mínimo que se tenia anteriormente (el cual cumplió con las restricciones) se poda esa rama de la recursividad, dado que no es posible disminuir la cantidad de metros nadados, solo se pueden mantener o aumentar.
 
-\subsection{Solución Greedy}
+\subsection{Solución Fuerza Bruta}
+Para resolver el problema inicialmente podemos generar todos los caminos posibles, lo cual es análogo a generar todas las cadenas binarias
+y despues recorrer cada una de estas cadenas llevando el contador de k, y donde este en True contamos la posible instancia:
+\begin{enumerate}
+    \item Si estamos encima de un tronco no variamos 
+    \item Si estamos encima de un cocodrilo inmediatamente sabemos que esa cadena no lleva a la solución
+    \item Si estamos encima de una casilla de agua disminuimos w en una unidad.
+\end{enumerate}
+
+\subsubsection{Posibles mejoras de este}
+El algoritmo antes descrito tiene un coste \textbf{Temporal:} $O(2^n)$ el cual es muy costoso como para ser efectivo en 
+terminos reales.
+Algunas podas que se aconseja son:
+\begin{enumerate}
+    \item Cuando podemos hacer un generador lazy el cual espera a que verifiquemos la ultima cadena generada para generar la siguiente
+    (Esta solución en la mayoría de casos encuentra más rápido la solución en caso de poder realizar el cruce) en el peor de los casos la complejidad sigue siendo la misma
+    \item Si conocemos que cierta casilla por tener un cocodrilo u otra razón siempre nos va a causar falla no generar las cadenas que tienen este.
+    \item Paralelizar esto, se puede tener un algoritmo lazy que entregue cadenas distintas a diferentes hilos o procesos con el objetivo de hacer más rápida la búsqueda.
+\end{enumerate}
+Aún así el algoritmo no deja de tener un costo muy alto en el peor de los casos.
+\subsubsection{Correctitud del algoritmo}
+El algoritmo al tener todas las cadenas binarias si existe una forma de cruzar que respete el problema existirá una cadena binaria que represente el caminos
+si en el camino no existe forma de cruzar respetando las restricciones cualquier forma de cruce representada en el algoritmo dará que es imposible.
+\subsubsection{Análisis de complejidad}
+\textbf{Temporal:} El costo temporal es $O(2^n)$ dado que es el costo de generar los posibles mapas y a medida que se genera leerlos.
+
+\section{Solución Greedy}
 
 Para resolver el problema de manera greedy hay que tener en cuenta lo siguiente:
 \begin{itemize}
@@ -123,6 +158,66 @@ s_{Map} = min_1 + min_2.
 
 - Si no hay un tronco en el rango de la última sección:
 Entonces en $Map_2$, el siguiente cuadrante desde la orilla izquierda no es un tronco, por tanto se nadó hasta el tronco lo cual es obligatorio dado que no existe forma de llegar al tronco y por cómo se dividen las secciones tampoco en el mapa, entonces se cumple lo anterior.
+
+
+\subsection{Algoritmo}
+
+\begin{figure}[H]
+    \centering
+    \begin{description}
+        \item[Código Greedy] 
+    \end{description}
+    \begin{lstlisting}[language=Python]
+        def run() -> None:
+            n,m,k = map(int, input().split())
+            A = input()
+            logs = [i for i in range(n) if A[i] == "L"]
+            logs.append(n+1)
+            i = -1
+            next_log = 0
+            while i < n-1:
+                if m >= logs[next_log] - i:
+                    i = logs[next_log]
+                else:
+                    i+=m
+                    if i > n-1:
+                        print("YES")
+                        return
+                    while i < n and i < logs[next_log]:
+                        if A[i] != "C" and k > 0:
+                            i+=1
+                            k-=1
+                        else:
+                            print("NO")
+                            return
+                next_log +=1
+            print("YES")
+     
+        for _ in range(int(input())):
+
+    \end{lstlisting}
+    
+\end{figure}
+\subsubsection{Correctitud}
+El algoritmo realiza correctamente la idea antes descrita dado que inicialmente guarda las posiciones de todos los troncos
+con la idea de tener forma de saber hasta cual puedo saltar 
+El ciclo se va a generar hasta a lo sumo llegar a la otra orilla 
+y en caso de finalizar dirá que fue posible llegar a esta.
+En el ciclo se comprueba si es posible realizar el salto al tronco mas cercano
+y en caso de no ser posible salta hasta la distancia maxima en ese caso
+comprueba que no se caiga en una casilla con un cocodrilo o que 
+se quede sin posibles metros para nadar, en ese caso lanza que no es posible
+Durante ese momento nadará mientras las condiciones sean las anteriores y no este sobre un tronco.
+Por lo tanto el algoritmo realiza la idea demostrada anteriormente.
+\subsection{Complejidad}
+\subsubsection{Temporal}
+La idea descrita anteriormente así como la implementación modelo tiene una 
+complejidad de $O(n)$ siendo $n$ la longitud del camino.
+\subsubsection{Espacial}
+La implementación modelo tiene una complejidad espacial de 
+$O(T)$ donde $T$ es la cantidad de troncos en el caminos
+dado que esta lo utiliza para el proximo salto
+$T \leq n$
 
 \end{document}
 
